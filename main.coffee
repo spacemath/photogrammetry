@@ -1,3 +1,5 @@
+#!vanilla
+
 class Image
     
     imageContainerClass: "drop-image-container"
@@ -46,15 +48,26 @@ class Image
         @context.canvas.height = h
         @context.drawImage(@image[0], 0, 0, w, h)
         
-        @canvas.on "mousemove", (e) => @mousemove?(@mouseCoords(e))
-        @canvas.on "click", (e) => @click?(@mouseCoords(e))
+        @canvas.on "mousemove", (e) => @mousemove?(@mouseData(e))
+            
+        @canvas.on "click", (e) => @click?(@mouseData(e))
         
         @loaded?(this)
+    
+    mouseData: (e) ->
+        pos = @mouseCoords(e)
+        imageData = @imageData pos
+        d = imageData.data
+        color = {r: d[0], g: d[1], b: d[2], alpha: d[3]}
+        {pos: pos, color: color, imageData: imageData}
         
     mouseCoords: (e) ->
         rect = @canvas[0].getBoundingClientRect()
         x: e.clientX - rect.left
         y: e.clientY - rect.top
+        
+    imageData: (pos) ->
+        @context.getImageData(pos.x, pos.y, 1, 1)
         
     highlight: (e, highlight=true) ->
         e.preventDefault()
@@ -66,15 +79,28 @@ class Demo
     constructor: ->
         @container = $("#image")
         loaded = (image) => @loaded image
-        mousemove = (pos) => @showCoords pos
-        click = (@pos) => @showCoords @pos
-        new Image {@container, loaded, mousemove, click}
+        mousemove = (data) =>
+            pos = data.pos
+            color = @getColor data
+            @showData pos, color
+        click = (@data) =>
+            @pos = @data.pos
+            @color = @getColor @data
+            @showData @pos, @color
+        @im = new Image {@container, loaded, mousemove, click}
 
     loaded: (image) ->
         console.log "Image loaded", image
         
-    showCoords: (pos) ->
-        clicked = if @pos then " (clicked x: #{@pos.x}, y: #{@pos.x})" else ""
-        $("#coords").html "x: #{pos.x}, y: #{pos.y}" + clicked
+    showData: (pos, color) ->
+        clicked = if @data then "<br>Clicked coord: (#{@pos.x}, #{@pos.x}), #{@color}" else ""
+        $("#image-data").html "Current coord: (#{pos.x}, #{pos.y}), #{color}" + clicked
         
+    getColor: (data) ->
+        c = data.color
+        hex = "#" + ("000000" + @rgbToHex(c.r, c.g, c.b)).slice(-6)
+        "<span class='image-color' style='background: #{hex}'>#{hex}</span>"
+        
+    rgbToHex: (r, g, b) -> ((r << 16) | (g << 8) | b).toString(16)
+    
 new Demo

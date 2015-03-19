@@ -89,7 +89,14 @@ a {
     opacity: 0.5;
 }
 
-#coords {
+#image-data {
     width: 600px;
     margin: 0 auto;
+    /*margin-top: 20px;*/
+    line-height: 40px;
+}
+
+.image-color {
+    padding: 5px;
+    color: white;
 }
