@@ -93,8 +93,8 @@ class Demo
         console.log "Image loaded", image
         
     showData: (pos, color) ->
-        clicked = if @data then "<br>Clicked coord: (#{@pos.x}, #{@pos.x}), #{@color}" else ""
-        $("#image-data").html "Current coord: (#{pos.x}, #{pos.y}), #{color}" + clicked
+        clicked = if @data then "<br>Clicked coord: (#{@pos.x}, #{@pos.x}) #{@color}" else ""
+        $("#image-data").html "Current coord: (#{pos.x}, #{pos.y}) #{color}" + clicked
         
     getColor: (data) ->
         c = data.color
