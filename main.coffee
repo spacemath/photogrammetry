@@ -79,27 +79,24 @@ class Demo
     constructor: ->
         @container = $("#image")
         loaded = (image) => @loaded image
-        mousemove = (data) =>
-            pos = data.pos
-            color = @getColor data
-            @showData pos, color
-        click = (@data) =>
-            @pos = @data.pos
-            @color = @getColor @data
-            @showData @pos, @color
-        @im = new Image {@container, loaded, mousemove, click}
+        mousemove = (data) => @showData $("#image-data-current"), "Current coord: ", data
+        click = (@data) => @showData $("#image-data-click"), "Clicked coord: ", @data
+        new Image {@container, loaded, mousemove, click}
 
     loaded: (image) ->
         console.log "Image loaded", image
         
-    showData: (pos, color) ->
-        clicked = if @data then "<br>Clicked coord: (#{@pos.x}, #{@pos.x}) #{@color}" else ""
-        $("#image-data").html "Current coord: (#{pos.x}, #{pos.y}) #{color}" + clicked
+    showData: (el, txt, data) ->
+        pos = data.pos
+        color = @getColor data
+        el.html "#{txt}(#{pos.x}, #{pos.y}) #{color}"
         
     getColor: (data) ->
         c = data.color
+        s = c.r + c.g + c.b
+        textCol = if s<500 then "white" else "black"
         hex = "#" + ("000000" + @rgbToHex(c.r, c.g, c.b)).slice(-6)
-        "<span class='image-color' style='background: #{hex}'>#{hex}</span>"
+        "<span class='image-color' style='color: #{textCol}; background: #{hex}'>#{hex}</span>"
         
     rgbToHex: (r, g, b) -> ((r << 16) | (g << 8) | b).toString(16)
     
