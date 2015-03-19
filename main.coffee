@@ -14,8 +14,6 @@ class Image
             text: "Drop an image here."
             mouseenter: (e) => @mouseenter(e)
             mouseleave: (e) => @mouseleave(e)
-            mousemove: (e) => @containerPos = {x: e.offsetX, y: e.offsetY}
-            # Works only if container same size as canvas
         
         @imageContainer
             .on('dragenter', (e) => @highlight e)
@@ -24,14 +22,28 @@ class Image
             .on('drop', (e) => @drop(e))
             
         @container.append @imageContainer
-        
+    
     drop: (e) ->
         @highlight e, false
+        @setInitialPos e
         file = e.originalEvent.dataTransfer.files[0]
         reader = new FileReader()
         loadend = (result) => @set(result)
         $(reader).on('loadend', -> loadend this.result)
         reader.readAsDataURL(file)
+        
+    setInitialPos: (e) ->
+        # Handles initial mouse coords/data.
+        # Works only if container same size as canvas.
+        o = e.originalEvent
+        ot = o.originalTarget
+        # Fixes difference between Chrome/Safari and Firefox:
+        if ot
+            # Firefox
+            @containerPos = {x: o.clientX - ot.offsetLeft, y: o.clientY - ot.offsetTop}
+        else
+            # Chrome/Safari
+            @containerPos = {x: o.offsetX, y: o.offsetY}
         
     set: (src) ->
         @imageContainer.empty()
@@ -68,6 +80,8 @@ class Image
         @loaded?(this)
         
     mouseData: (pos) ->
+        return null unless pos?.x? and pos?.y?
+        @containerPos = pos
         imageData = @imageData pos
         d = imageData.data
         color = {r: d[0], g: d[1], b: d[2], alpha: d[3]}
@@ -80,7 +94,8 @@ class Image
         y: round(e.clientY - rect.top)
         
     imageData: (pos) ->
-        @context.getImageData(pos.x, pos.y, 1, 1)
+        return null unless pos.x? and pos.y?
+        @context?.getImageData(pos.x, pos.y, 1, 1)
         
     highlight: (e, highlight=true) ->
         e.preventDefault()
