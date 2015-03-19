@@ -69,6 +69,7 @@ a {
     width: 600px;
     height: 400px;
     line-height: 400px;  /* Vertical centering for single line of text */
+    border: 1px solid #aaa;
 }
 
 .drop-image-container.drop-image-hover {
@@ -103,6 +104,6 @@ a {
 .image-color {
     padding: 5px;
     color: white;
-    border: solid 1px black;
+    border: solid 1px #aaa;
     font-family: courier;
 }
