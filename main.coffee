@@ -7,11 +7,15 @@ class Image
     
     constructor: (@spec) ->
         
-        {@container, @loaded, @mousemove, @click} = @spec
+        {@container, @loaded, @mousemove, @click, @mouseenter, @mouseleave} = @spec
         
         @imageContainer = $ "<div>",
             class: @imageContainerClass
             text: "Drop an image here."
+            mouseenter: (e) => @mouseenter(e)
+            mouseleave: (e) => @mouseleave(e)
+            mousemove: (e) => @containerPos = {x: e.offsetX, y: e.offsetY}
+            # Works only if container same size as canvas
         
         @imageContainer
             .on('dragenter', (e) => @highlight e)
@@ -22,9 +26,7 @@ class Image
         @container.append @imageContainer
         
     drop: (e) ->
-        
-        @highlight e, false 
-        
+        @highlight e, false
         file = e.originalEvent.dataTransfer.files[0]
         reader = new FileReader()
         loadend = (result) => @set(result)
@@ -32,30 +34,40 @@ class Image
         reader.readAsDataURL(file)
         
     set: (src) ->
-        @image = $ "<img>", src: src
-        @imageContainer.html @image
+        @imageContainer.empty()
+        @image = $ "<img>", load: => @draw()
+        @imageContainer.append @image
+        @image.attr src: src
         
-        w = @image.width()
-        h = @image.height()
+    draw: ->
         
-        @imageContainer.width(w).height(h)
+        @w = @image.width()
+        @h = @image.height()
+        
+        @imageContainer.width(@w).height(@h)
         
         @canvas = $("<canvas>")
         @imageContainer.append @canvas
         
-        @context = @canvas[0].getContext('2d')
-        @context.canvas.width = w
-        @context.canvas.height = h
-        @context.drawImage(@image[0], 0, 0, w, h)
+        @image.hide()
         
-        @canvas.on "mousemove", (e) => @mousemove?(@mouseData(e))
-            
-        @canvas.on "click", (e) => @click?(@mouseData(e))
+        @context = @canvas[0].getContext('2d')
+        @context.canvas.width = @w
+        @context.canvas.height = @h
+        
+        @context.drawImage(@image[0], 0, 0, @w, @h)
+        
+        @canvas.on "mousemove", (e) => @mousemove?(@mouseData(@mouseCoords(e)))
+        
+        @canvas.on "click", (e) => @click?(@mouseData(@mouseCoords(e)))
+        
+        # Initial postion--to handle case in which mouse hasn't moved since dropping image.
+        @imageContainer.css(cursor: "crosshair")  # Cursor before mouse moves after drop.
+        @mousemove?(@mouseData(@containerPos))
         
         @loaded?(this)
-    
-    mouseData: (e) ->
-        pos = @mouseCoords(e)
+        
+    mouseData: (pos) ->
         imageData = @imageData pos
         d = imageData.data
         color = {r: d[0], g: d[1], b: d[2], alpha: d[3]}
@@ -63,8 +75,9 @@ class Image
         
     mouseCoords: (e) ->
         rect = @canvas[0].getBoundingClientRect()
-        x: Math.round(e.clientX - rect.left)
-        y: Math.round(e.clientY - rect.top)
+        round = Math.round
+        x: round(e.clientX - rect.left)
+        y: round(e.clientY - rect.top)
         
     imageData: (pos) ->
         @context.getImageData(pos.x, pos.y, 1, 1)
@@ -78,10 +91,14 @@ class Demo
     
     constructor: ->
         @container = $("#image")
+        @current = $("#image-data-current")
+        @clicked = $("#image-data-click")
         loaded = (image) => @loaded image
-        mousemove = (data) => @showData $("#image-data-current"), "Current coord: ", data
-        click = (@data) => @showData $("#image-data-click"), "Clicked coord: ", @data
-        new Image {@container, loaded, mousemove, click}
+        mousemove = (data) => @showData @current, "Current coord: ", data
+        click = (@data) => @showData @clicked, "Clicked coord: ", @data
+        mouseenter = => @current.show()
+        mouseleave = => @current.hide()
+        new Image {@container, loaded, mousemove, click, mouseenter, mouseleave}
 
     loaded: (image) ->
         console.log "Image loaded", image
