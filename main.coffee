@@ -63,8 +63,8 @@ class Image
         
     mouseCoords: (e) ->
         rect = @canvas[0].getBoundingClientRect()
-        x: e.clientX - rect.left
-        y: e.clientY - rect.top
+        x: Math.round(e.clientX - rect.left)
+        y: Math.round(e.clientY - rect.top)
         
     imageData: (pos) ->
         @context.getImageData(pos.x, pos.y, 1, 1)
