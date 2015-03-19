@@ -78,8 +78,18 @@ a {
 
 .drop-image-container img {
     max-width: 600px;
+    display: none;
 }
 
 .drop-image-container.drop-image-hover img {
     opacity: 0.5;
+}
+
+.drop-image-container.drop-image-hover canvas {
+    opacity: 0.5;
+}
+
+#coords {
+    width: 600px;
+    margin: 0 auto;
 }
