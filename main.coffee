@@ -75,14 +75,14 @@ class Image
         
         # Initial postion--to handle case in which mouse hasn't moved since dropping image.
         @imageContainer.css(cursor: "crosshair")  # Cursor before mouse moves after drop.
-        @mousemove?(@mouseData(@containerPos))
-        
+        @mousemove?(@mouseData(@containerPos)) if @containerPos?
+
         @loaded?(this)
         
     mouseData: (pos) ->
         return null unless pos?.x? and pos?.y?
         @containerPos = pos
-        imageData = @imageData pos
+        if pos? then imageData = @imageData pos, {dx:1, dy:1}
         d = imageData.data
         color = {r: d[0], g: d[1], b: d[2], alpha: d[3]}
         {pos: pos, color: color, imageData: imageData}
@@ -93,9 +93,10 @@ class Image
         x: round(e.clientX - rect.left)
         y: round(e.clientY - rect.top)
         
-    imageData: (pos) ->
-        return null unless pos.x? and pos.y?
-        @context?.getImageData(pos.x, pos.y, 1, 1)
+    imageData: (pos, rng) ->
+        pos ?= {x:0, y:0}
+        rng ?= {dx:@w, dy:@h}
+        @context?.getImageData(pos.x, pos.y, rng.dx, rng.dy)
         
     highlight: (e, highlight=true) ->
         e.preventDefault()
@@ -113,7 +114,9 @@ class Demo
         click = (@data) => @showData @clicked, "Clicked coord: ", @data
         mouseenter = => @current.show()
         mouseleave = => @current.hide()
-        new Image {@container, loaded, mousemove, click, mouseenter, mouseleave}
+        image = new Image {@container, loaded, mousemove, click, mouseenter, mouseleave}
+        image.set("./Lenna.png")
+        console.log "imageData?", image.imageData()
 
     loaded: (image) ->
         console.log "Image loaded", image
