@@ -107,3 +107,8 @@ a {
     border: solid 1px #aaa;
     font-family: courier;
 }
+
+figcaption {
+    text-align: center;
+}
+
