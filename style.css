@@ -1,73 +1,73 @@
 /* Element styles */
 
 body {
-	font-family: Verdana, 'DejaVu Sans', sans-serif;
+  font-family: Verdana, 'DejaVu Sans', sans-serif;
 }
 
 h1 {
-	line-height: 120%;
+  line-height: 120%;
 }
 
 a {
-	color: #ddd;
+  color: #ddd;
 }
 
 /* Main container */
 
 #container {
-	width: 906px;
-	margin: 0 auto;
-	margin-top: 40px;
-	margin-bottom: 40px;
-	font-size: 12pt;
-	line-height: 150%;
+  width: 906px;
+  margin: 0 auto;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  font-size: 12pt;
+  line-height: 150%;
 }
 
 /* Page divs */
 
 .left-col {
-	float: left;
-	width: 440px;
+  float: left;
+  width: 440px;
 }
 
 .right-col {
-	float: right;
-	width: 440px;
+  float: right;
+  width: 440px;
 }
 
 .clear {
-	clear: both;
+  clear: both;
 }
 
 .footnote {
-	font-size: 9pt;
-	line-height: 120%;
+  font-size: 9pt;
+  line-height: 120%;
 }
 
 .preloader {
-	position: absolute;
-	width: 20px;
-	height: 20px;
-	left: 50%;
-	top: 50%;
-	margin-left: -10px;
-	margin-top: -10px;
-	background-image: url(../resources/images/preloader-white.gif);
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 50%;
+  top: 50%;
+  margin-left: -10px;
+  margin-top: -10px;
+  background-image: url(../resources/images/preloader-white.gif);
 }
 
 /*-------------------------------------------------------------------*/
 
 .drop-image-container {
-    width: 600px;
-    height: 400px;
-    margin: 0 auto;
+    width: 800px;
+    /*height: 600px;
+    margin: 0 auto;*/
     line-height: 400px;  /* Vertical centering for single line of text */
     text-align: center;
     font-size: 20px;
     font-weight: bold;
     background: #ddd;
     color: #000;
-    border: 1px solid #aaa;
+    /*border: 1px solid #aaa;*/
 }
 
 .drop-image-container.drop-image-hover {
@@ -96,6 +96,7 @@ a {
 
 .image-data {
     width: 600px;
+    height: 40px;
     margin: 0 auto;
     line-height: 40px;
     text-align: center;
@@ -108,7 +109,134 @@ a {
     font-family: courier;
 }
 
+/*----*/
+
 figcaption {
     text-align: center;
+}
+
+#analyze {
+    position: relative;
+    margin: 0 auto;
+    width: 800px;
+    /*height: 600px;*/
+    /*background: green;*/
+}
+
+.temp {
+  position: absolute;
+  width: 600px;
+  left: 50%;
+  margin-left: -300px;
+}
+
+.overlay {
+    position: absolute;
+    /*width: 600px;*/
+    /*left: 50%;
+    margin-left: -300px;*/
+    left: 0;
+    top: 0;
+    /*margin-left: 0;*/
+    z-index: 0;
+}
+
+#plot-outer {
+  position: relative;
+  margin: 0 auto;
+  width: 800px;
+  height: 450px;
+  /*background: green;*/
+}
+
+#plot {
+  position: absolute;
+  width: 500px;
+  height: 800px;
+  left: 50%;
+  margin-left: -250px;
+  z-index: 20;
+  /*background: green;*/
+}
+
+
+#image {
+    /*top: 44px;*/
+    z-index: 20;
+}
+
+
+#guide {
+    /*position: absolute;*/
+    left: 0;
+    top:  0;
+    margin: 0 auto;
+    z-index: 30;
+}
+
+#equation {
+    /*position: absolute;*/
+    left: 30px;
+    top: 0;
+    margin: 0 auto;
+}
+
+.modelline {
+    fill: none;
+    stroke: green;
+    stroke-width: 2;
+}
+
+.modelcircle {
+    fill: green;
+    stroke: black;
+    stroke-width: 2;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+path.line
+{
+    fill: none;
+    /*stroke: #000;*/
+}
+
+
+.axis path, .axis line {
+  fill: none;
+  stroke: steelblue;
+  shape-rendering: auto;
+}
+
+.control-circle {
+    cursor: ew-resize;
+}
+
+.foot .puzlet-link { float:left }
+.foot .org-link { float:right }
+
+svg {
+    overflow: visible;
+}
+
+line.verticalGrid, line.horizontalGrid{
+    fill: none;
+    shape-rendering: auto;
+    stroke: grey;
+    stroke-width: 1px;
+    opacity: 0.2;
+}
+
+.unselectable {
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+
+	/*
+	 Introduced in IE 10.
+	 See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+	*/
+	-ms-user-select: none;
+	user-select: none;
 }
 

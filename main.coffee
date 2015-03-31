@@ -12,10 +12,15 @@ class Image
         @imageContainer = $ "<div>",
             class: @imageContainerClass
             text: "Drop an image here."
-            mouseenter: (e) => @mouseenter(e)
-            mouseleave: (e) => @mouseleave(e)
+            #mouseenter: (e) => @mouseenter(e)
+            #mouseleave: (e) => @mouseleave(e)
         
-        @imageContainer
+        @dropTarget = $("#guide")
+        
+        @dropTarget.mouseenter (e) => @mouseenter(e)
+        @dropTarget.mouseleave (e) => @mouseleave(e)
+        
+        @dropTarget
             .on('dragenter', (e) => @highlight e)
             .on('dragexit', (e) => @highlight e, false)
             .on('dragover', (e) => e.preventDefault())
@@ -56,6 +61,14 @@ class Image
         @w = @image.width()
         @h = @image.height()
         
+        console.log "width", @w
+        $(".temp").css
+          width: @w + "px"
+          marginLeft: -@w/2 + "px"
+          
+        $("#analyze").height @h+50
+        #$("#plot-outer").height 300
+        
         @imageContainer.width(@w).height(@h)
         
         @canvas = $("<canvas>")
@@ -69,9 +82,11 @@ class Image
         
         @context.drawImage(@image[0], 0, 0, @w, @h)
         
-        @canvas.on "mousemove", (e) => @mousemove?(@mouseData(@mouseCoords(e)))
+        #@canvas.on "mousemove", (e) => @mousemove?(@mouseData(@mouseCoords(e)))
+        $("#guide").on "mousemove", (e) => @mousemove?(@mouseData(@mouseCoords(e)))
         
-        @canvas.on "click", (e) => @click?(@mouseData(@mouseCoords(e)))
+        #@canvas.on "click", (e) => @click?(@mouseData(@mouseCoords(e)))
+        $("#guide").on "click", (e) => @click?(@mouseData(@mouseCoords(e)))
         
         # Initial postion--to handle case in which mouse hasn't moved since dropping image.
         @imageContainer.css(cursor: "crosshair")  # Cursor before mouse moves after drop.
@@ -92,12 +107,20 @@ class Image
         round = Math.round
         x: round(e.clientX - rect.left)
         y: round(e.clientY - rect.top)
-        
+
     imageData: (pos, rng) ->
         pos ?= {x:0, y:0}
         rng ?= {dx:@w, dy:@h}
         @context?.getImageData(pos.x, pos.y, rng.dx, rng.dy)
         
+    getPixels: ->
+        @imageData().data
+
+    putPixels: (newData) ->
+        imageData = @context?.getImageData(0, 0, @w, @h)
+        imageData.data[k] = newData[k] for k in [0...newData.length]
+        @context?.putImageData(imageData, 0, 0);
+
     highlight: (e, highlight=true) ->
         e.preventDefault()
         method = if highlight then "addClass" else "removeClass"
@@ -111,17 +134,27 @@ class Demo
         @clicked = $("#image-data-click")
         loaded = (image) => @loaded image
         mousemove = (data) => @showData @current, "Current coord: ", data
-        click = (@data) => @showData @clicked, "Clicked coord: ", @data
-        mouseenter = => @current.show()
-        mouseleave = => @current.hide()
+        click = (@data) => #@showData @clicked, "Clicked coord: ", @data
+        mouseenter = => #@current.show()
+        mouseleave = => @showData @current #@current.hide()
         image = new Image {@container, loaded, mousemove, click, mouseenter, mouseleave}
-        image.set("./Lenna.png")
-        console.log "imageData?", image.imageData()
+        image.set("SMPTE_Color_Bars.png")
+        #@current.html "&nbsp;"
+        @showData @current
+        @current.show()
 
     loaded: (image) ->
-        console.log "Image loaded", image
+        console.log "LOADED"
+        $blab.image = image
+        guide = new $blab.Guide image.w, image.h
+        $blab.plot = new $blab.Plot image.w, image.h
+
+        #guide.dragMarker(guide.m1, 0, 0)
         
     showData: (el, txt, data) ->
+        unless data
+          el.html "&nbsp;"
+          return
         pos = data.pos
         color = @getColor data
         el.html "#{txt}(#{pos.x}, #{pos.y}) #{color}"
@@ -136,3 +169,4 @@ class Demo
     rgbToHex: (r, g, b) -> ((r << 16) | (g << 8) | b).toString(16)
     
 new Demo
+
