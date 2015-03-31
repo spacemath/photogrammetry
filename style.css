@@ -198,7 +198,7 @@ figcaption {
 path.line
 {
     fill: none;
-    /*stroke: #000;*/
+    opacity: 0.5;
 }
 
 
