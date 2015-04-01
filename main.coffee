@@ -114,9 +114,11 @@ class Image
     
 class Simulation
     
+    # TODO: path const
     images:
-        test: "../resources/images/SMPTE_Color_Bars.png"
-        craters: "../resources/images/mars-crater.jpg"
+        test: {img: "../resources/images/SMPTE_Color_Bars.png", button: "#test-image-button"}
+        jellyfish: {img: "../resources/images/jellyfish.png", button: "#jellyfish-image-button"}
+        craters: {img: "../resources/images/mars-crater.jpg", button: "#craters-image-button"}
     
     plotHeight: 200
     
@@ -131,12 +133,13 @@ class Simulation
         mouseenter = => # no method
         mouseleave = => @showData @current
         @image = new Image {@container, @dropTarget, loaded, mousemove, click, mouseenter, mouseleave}
-        @image.set(@images.craters)
+        @image.set(@images.craters.img)
         @showData @current
         @current.show()
         
-        $("#test-image-button").click => @setImage(@images.test)
-        $("#craters-image-button").click => @setImage(@images.craters)
+        # Image buttons
+        set = (img) => => @setImage(img)
+        $(i.button).click(set(i.img)) for label, i of @images
         
     setImage: (img) ->
         #$("#image-loading").html "Loading..."
