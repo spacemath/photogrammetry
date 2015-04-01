@@ -120,6 +120,10 @@ class Image
     
 class Demo
     
+    images:
+        test: "../resources/images/SMPTE_Color_Bars.png"
+        craters: "../resources/images/mars-crater.jpg"
+    
     plotHeight: 200
     
     constructor: ->
@@ -131,10 +135,18 @@ class Demo
         click = (@data) => # no method
         mouseenter = => # no method
         mouseleave = => @showData @current
-        image = new Image {@container, loaded, mousemove, click, mouseenter, mouseleave}
-        image.set("SMPTE_Color_Bars.png")
+        @image = new Image {@container, loaded, mousemove, click, mouseenter, mouseleave}
+        @image.set(@images.craters)
         @showData @current
         @current.show()
+        
+        $("#test-image-button").click => @setImage(@images.test)
+        $("#craters-image-button").click => @setImage(@images.craters)
+        
+    setImage: (img) ->
+        #$("#image-loading").html "Loading..."
+        @image.set(img)
+        false  # For anchor
         
     loaded: (image) ->
         
@@ -144,6 +156,7 @@ class Demo
         h = image.h
         
         console.log "LOADED IMAGE", w, h
+        $("#image-loading").empty()
         
         # Set outer/container sizes based on image size
         @setDims "#image-outer", "#image-container", w, h+30

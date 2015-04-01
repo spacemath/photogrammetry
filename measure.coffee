@@ -295,12 +295,12 @@ class $blab.Guide extends d3Object
             @tId = null
             
         unless @computing
-            @tId = setTimeout (=> @computeColor(X1, Y1, X2, Y2)), 50
+            @tId = setTimeout (=> @computeColor(X1, Y1, X2, Y2)), 40
             
     computeColor: (X1, Y1, X2, Y2) =>
         
         @computing = true
-        console.log "COMPUTING..."
+        #console.log "COMPUTING..."
         
         dX = X2-X1
         dY = Y2-Y1
@@ -322,5 +322,5 @@ class $blab.Guide extends d3Object
         $blab.plot.update(data)
         
         @computing = false
-        console.log "...DONE"
+        #console.log "...DONE"
 
