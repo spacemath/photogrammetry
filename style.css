@@ -57,128 +57,109 @@ a {
 
 /*-------------------------------------------------------------------*/
 
+.graphics-outer {
+  position: relative;
+  width: 800px;
+  height: 500px;
+  margin: 0 auto;
+  /*background: green;*/
+}
+
+.graphics-container {
+  position: absolute;
+  width: 600px;
+  height: 400px;
+  top: 20px;
+  left: 50%;
+  margin-left: -300px;  /* should  be half width */
+  /*background: gray;*/
+}
+
+.overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+}
+
+/* Unused */
+#equation {
+  left: 30px;
+  top: 0;
+  margin: 0 auto;
+}
+
+.unselectable {
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+
+	/*
+	 Introduced in IE 10.
+	 See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+	*/
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/*-------------------------------------------------------------------*/
+
 .drop-image-container {
-    width: 800px;
-    /*height: 600px;
-    margin: 0 auto;*/
-    line-height: 400px;  /* Vertical centering for single line of text */
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    background: #ddd;
-    color: #000;
-    /*border: 1px solid #aaa;*/
+  width: 800px;
+  /*height: 600px;
+  margin: 0 auto;*/
+  line-height: 400px;  /* Vertical centering for single line of text */
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  background: #ddd;
+  color: #000;
+  /*border: 1px solid #aaa;*/
 }
 
 .drop-image-container.drop-image-hover {
-    background: #555;
-    color: #ddd;
+  background: #555;
+  color: #ddd;
 }
 
 .drop-image-container img {
-    max-width: 600px;
-    margin-left: 0;
-    z-index: 0;
+  max-width: 600px;
+  margin-left: 0;
+  z-index: 0;
 }
 
 .drop-image-container canvas {
-    z-index: 10;
-    cursor: crosshair;
+  z-index: 10;
+  cursor: crosshair;
 }
 
 .drop-image-container.drop-image-hover img {
-    opacity: 0.5;
+  opacity: 0.5;
 }
 
 .drop-image-container.drop-image-hover canvas {
-    opacity: 0.5;
+  opacity: 0.5;
 }
 
 .image-data {
-    width: 600px;
-    height: 40px;
-    margin: 0 auto;
-    line-height: 40px;
-    text-align: center;
+  width: 600px;
+  height: 40px;
+  margin: 0 auto;
+  line-height: 40px;
+  text-align: center;
 }
 
 .image-color {
-    padding: 5px;
-    color: white;
-    border: solid 1px #aaa;
-    font-family: courier;
+  padding: 5px;
+  color: white;
+  border: solid 1px #aaa;
+  font-family: courier;
 }
 
 /*----*/
 
 figcaption {
     text-align: center;
-}
-
-#analyze {
-    position: relative;
-    margin: 0 auto;
-    width: 800px;
-    /*height: 600px;*/
-    /*background: green;*/
-}
-
-.temp {
-  position: absolute;
-  width: 600px;
-  left: 50%;
-  margin-left: -300px;
-}
-
-.overlay {
-    position: absolute;
-    /*width: 600px;*/
-    /*left: 50%;
-    margin-left: -300px;*/
-    left: 0;
-    top: 0;
-    /*margin-left: 0;*/
-    z-index: 0;
-}
-
-#plot-outer {
-  position: relative;
-  margin: 0 auto;
-  width: 800px;
-  height: 450px;
-  /*background: green;*/
-}
-
-#plot {
-  position: absolute;
-  width: 500px;
-  height: 800px;
-  left: 50%;
-  margin-left: -250px;
-  z-index: 20;
-  /*background: green;*/
-}
-
-
-#image {
-    /*top: 44px;*/
-    z-index: 20;
-}
-
-
-#guide {
-    /*position: absolute;*/
-    left: 0;
-    top:  0;
-    margin: 0 auto;
-    z-index: 30;
-}
-
-#equation {
-    /*position: absolute;*/
-    left: 30px;
-    top: 0;
-    margin: 0 auto;
 }
 
 .modelline {
@@ -195,8 +176,7 @@ figcaption {
     opacity: 0.5;
 }
 
-path.line
-{
+path.line {
     fill: none;
     opacity: 0.5;
 }
@@ -220,23 +200,9 @@ svg {
 }
 
 line.verticalGrid, line.horizontalGrid{
-    fill: none;
-    shape-rendering: auto;
-    stroke: grey;
-    stroke-width: 1px;
-    opacity: 0.2;
+  fill: none;
+  shape-rendering: auto;
+  stroke: grey;
+  stroke-width: 1px;
+  opacity: 0.2;
 }
-
-.unselectable {
-	-moz-user-select: -moz-none;
-	-khtml-user-select: none;
-	-webkit-user-select: none;
-
-	/*
-	 Introduced in IE 10.
-	 See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
-	*/
-	-ms-user-select: none;
-	user-select: none;
-}
-

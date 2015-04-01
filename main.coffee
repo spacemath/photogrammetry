@@ -61,14 +61,6 @@ class Image
         @w = @image.width()
         @h = @image.height()
         
-        console.log "width", @w
-        $(".temp").css
-          width: @w + "px"
-          marginLeft: -@w/2 + "px"
-          
-        $("#analyze").height @h+50
-        #$("#plot-outer").height 300
-        
         @imageContainer.width(@w).height(@h)
         
         @canvas = $("<canvas>")
@@ -146,8 +138,22 @@ class Demo
     loaded: (image) ->
         console.log "LOADED"
         $blab.image = image
-        guide = new $blab.Guide image.w, image.h
-        $blab.plot = new $blab.Plot image.w, image.h
+        
+        w = image.w
+        h = image.h
+        
+        console.log "w/h", w, h
+        
+        g = $ ".graphics-container"
+        g.width w
+        g.css marginLeft: -w/2
+        g.height h
+        
+        go = $ ".graphics-outer"
+        go.height h+100
+        
+        guide = new $blab.Guide w, h
+        $blab.plot = new $blab.Plot w, h
 
         #guide.dragMarker(guide.m1, 0, 0)
         

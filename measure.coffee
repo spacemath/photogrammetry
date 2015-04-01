@@ -19,13 +19,6 @@ class $blab.Plot extends d3Object
         
         super "plot"
         
-        console.log "w/h", @w, @h
-                
-        #$("#plot-outer").width @w
-        $("#plot").width @w
-        $("#plot").css marginLeft: -@w/2
-        $("#plot").height @h
-        
         @obj.attr('width', @w).attr('height', @h)
         
         @plot = @obj.append('g')
