@@ -121,7 +121,7 @@ a {
   text-align: center;
   font-size: 20px;
   font-weight: bold;
-  background: #ddd;
+  /*background: #ddd;*/
   color: #000;
   /*border: 1px solid #aaa;*/
 }
