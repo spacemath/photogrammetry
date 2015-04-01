@@ -120,42 +120,43 @@ class Image
     
 class Demo
     
+    plotHeight: 200
+    
     constructor: ->
         @container = $("#image")
         @current = $("#image-data-current")
         @clicked = $("#image-data-click")
         loaded = (image) => @loaded image
         mousemove = (data) => @showData @current, "Current coord: ", data
-        click = (@data) => #@showData @clicked, "Clicked coord: ", @data
-        mouseenter = => #@current.show()
-        mouseleave = => @showData @current #@current.hide()
+        click = (@data) => # no method
+        mouseenter = => # no method
+        mouseleave = => @showData @current
         image = new Image {@container, loaded, mousemove, click, mouseenter, mouseleave}
         image.set("SMPTE_Color_Bars.png")
-        #@current.html "&nbsp;"
         @showData @current
         @current.show()
-
+        
     loaded: (image) ->
-        console.log "LOADED"
+        
         $blab.image = image
         
         w = image.w
         h = image.h
         
-        console.log "w/h", w, h
+        console.log "LOADED IMAGE", w, h
         
-        g = $ ".graphics-container"
-        g.width w
-        g.css marginLeft: -w/2
-        g.height h
-        
-        go = $ ".graphics-outer"
-        go.height h+100
+        # Set outer/container sizes based on image size
+        @setDims "#image-outer", "#image-container", w, h+30
+        @setDims "#plot-outer", "#plot", w, @plotHeight+100
         
         guide = new $blab.Guide w, h
-        $blab.plot = new $blab.Plot w, h
-
-        #guide.dragMarker(guide.m1, 0, 0)
+        $blab.plot = new $blab.Plot "plot", w, @plotHeight
+        
+    setDims: (outerSel, containerSel, w, h) ->
+        $(outerSel).height(h)
+        c = $ containerSel
+        c.width(w).height(h)
+        c.css(marginLeft: -w/2)
         
     showData: (el, txt, data) ->
         unless data
@@ -169,8 +170,11 @@ class Demo
         c = data.color
         s = c.r + c.g + c.b
         textCol = if s<500 then "white" else "black"
+        n = (Math.round(x/255*100)/100 for x in [c.r, c.g, c.b])
+        rgb = "(#{n[0]}, #{n[1]}, #{n[2]})"
         hex = "#" + ("000000" + @rgbToHex(c.r, c.g, c.b)).slice(-6)
-        "<span class='image-color' style='color: #{textCol}; background: #{hex}'>#{hex}</span>"
+        "<span class='image-color' style='color: #{textCol}; background: #{hex}'>RGB = #{rgb}</span>"
+        #"<span class='image-color' style='color: #{textCol}; background: #{hex}'>#{hex}</span>"
         
     rgbToHex: (r, g, b) -> ((r << 16) | (g << 8) | b).toString(16)
     

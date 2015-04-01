@@ -8,6 +8,15 @@ h1 {
   line-height: 120%;
 }
 
+h2 {
+  font-size: 20pt;
+  font-weight: normal;
+  color: #333;
+  border-bottom: 1px solid #333;
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+}
+
 a {
   color: #ddd;
 }
@@ -69,7 +78,7 @@ a {
   position: absolute;
   width: 600px;
   height: 400px;
-  top: 20px;
+  top: 10px;
   left: 50%;
   margin-left: -300px;  /* should  be half width */
   /*background: gray;*/
@@ -204,5 +213,5 @@ line.verticalGrid, line.horizontalGrid{
   shape-rendering: auto;
   stroke: grey;
   stroke-width: 1px;
-  opacity: 0.2;
+  opacity: 0.4;
 }
