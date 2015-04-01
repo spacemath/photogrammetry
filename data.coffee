@@ -1,5 +1,7 @@
 #!vanilla
 
+# Edit code; press shift-enter or swipe right.
+
 # retrieve image pixels
 pix = $blab.image.getPixels() #;
 
@@ -18,4 +20,4 @@ filter = (f) ->
 filter brighten #;
 
 # insert pixels
-$blab.image.putPixels(pix)
+$blab.image.putPixels(pix) #;

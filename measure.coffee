@@ -142,10 +142,10 @@ class $blab.Guide extends d3Object
         {x: 0.95, y: 0.95}
     ]
     
-    constructor: (@w, @h)->
-
-        super "guide"
-
+    constructor: (@id, @w, @h)->
+        
+        super @id
+        
         # housekeeping
         @obj.on("click", null)  # Clear any previous event handlers.
         d3.behavior.drag().on("drag", null)  # Clear any previous event handlers.
@@ -300,10 +300,9 @@ class $blab.Guide extends d3Object
     computeColor: (X1, Y1, X2, Y2) =>
         
         @computing = true
-        #console.log "COMPUTING..."
         
-        dX = X2-X1
-        dY = Y2-Y1
+        dX = X2 - X1
+        dY = Y2 - Y1
         
         Xq = (Math.round(X1 + dX*ri) for ri in @steps)
         Yq = (Math.round(Y1 + dY*ri) for ri in @steps)
@@ -322,5 +321,4 @@ class $blab.Guide extends d3Object
         $blab.plot.update(data)
         
         @computing = false
-        #console.log "...DONE"
 

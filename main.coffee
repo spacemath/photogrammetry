@@ -7,15 +7,11 @@ class Image
     
     constructor: (@spec) ->
         
-        {@container, @loaded, @mousemove, @click, @mouseenter, @mouseleave} = @spec
+        {@container, @dropTarget, @loaded, @mousemove, @click, @mouseenter, @mouseleave} = @spec
         
         @imageContainer = $ "<div>",
             class: @imageContainerClass
             text: "Drop an image here."
-            #mouseenter: (e) => @mouseenter(e)
-            #mouseleave: (e) => @mouseleave(e)
-        
-        @dropTarget = $("#guide")
         
         @dropTarget.mouseenter (e) => @mouseenter(e)
         @dropTarget.mouseleave (e) => @mouseleave(e)
@@ -74,16 +70,13 @@ class Image
         
         @context.drawImage(@image[0], 0, 0, @w, @h)
         
-        #@canvas.on "mousemove", (e) => @mousemove?(@mouseData(@mouseCoords(e)))
-        $("#guide").on "mousemove", (e) => @mousemove?(@mouseData(@mouseCoords(e)))
-        
-        #@canvas.on "click", (e) => @click?(@mouseData(@mouseCoords(e)))
-        $("#guide").on "click", (e) => @click?(@mouseData(@mouseCoords(e)))
+        @dropTarget.on "mousemove", (e) => @mousemove?(@mouseData(@mouseCoords(e)))
+        @dropTarget.on "click", (e) => @click?(@mouseData(@mouseCoords(e)))
         
         # Initial postion--to handle case in which mouse hasn't moved since dropping image.
         @imageContainer.css(cursor: "crosshair")  # Cursor before mouse moves after drop.
         @mousemove?(@mouseData(@containerPos)) if @containerPos?
-
+        
         @loaded?(this)
         
     mouseData: (pos) ->
@@ -99,7 +92,7 @@ class Image
         round = Math.round
         x: round(e.clientX - rect.left)
         y: round(e.clientY - rect.top)
-
+        
     imageData: (pos, rng) ->
         pos ?= {x:0, y:0}
         rng ?= {dx:@w, dy:@h}
@@ -107,18 +100,19 @@ class Image
         
     getPixels: ->
         @imageData().data
-
+        
     putPixels: (newData) ->
         imageData = @context?.getImageData(0, 0, @w, @h)
         imageData.data[k] = newData[k] for k in [0...newData.length]
-        @context?.putImageData(imageData, 0, 0);
-
+        @context?.putImageData(imageData, 0, 0)
+        @loaded?(this)
+        
     highlight: (e, highlight=true) ->
         e.preventDefault()
         method = if highlight then "addClass" else "removeClass"
         @imageContainer[method](@hoverClass)
     
-class Demo
+class Simulation
     
     images:
         test: "../resources/images/SMPTE_Color_Bars.png"
@@ -128,6 +122,7 @@ class Demo
     
     constructor: ->
         @container = $("#image")
+        @dropTarget = $("#guide")
         @current = $("#image-data-current")
         @clicked = $("#image-data-click")
         loaded = (image) => @loaded image
@@ -135,7 +130,7 @@ class Demo
         click = (@data) => # no method
         mouseenter = => # no method
         mouseleave = => @showData @current
-        @image = new Image {@container, loaded, mousemove, click, mouseenter, mouseleave}
+        @image = new Image {@container, @dropTarget, loaded, mousemove, click, mouseenter, mouseleave}
         @image.set(@images.craters)
         @showData @current
         @current.show()
@@ -152,18 +147,21 @@ class Demo
         
         $blab.image = image
         
-        w = image.w
-        h = image.h
+        @w = image.w
+        @h = image.h
         
-        console.log "LOADED IMAGE", w, h
+        console.log "LOADED IMAGE", @w, @h
         $("#image-loading").empty()
         
         # Set outer/container sizes based on image size
-        @setDims "#image-outer", "#image-container", w, h+30
-        @setDims "#plot-outer", "#plot", w, @plotHeight+100
+        @setDims "#image-outer", "#image-container", @w, @h+30
+        @setDims "#plot-outer", "#plot", @w, @plotHeight+100
         
-        guide = new $blab.Guide w, h
-        $blab.plot = new $blab.Plot "plot", w, @plotHeight
+        @draw()
+        
+    draw: ->
+        guide = new $blab.Guide "guide", @w, @h
+        $blab.plot = new $blab.Plot "plot", @w, @plotHeight
         
     setDims: (outerSel, containerSel, w, h) ->
         $(outerSel).height(h)
@@ -191,5 +189,5 @@ class Demo
         
     rgbToHex: (r, g, b) -> ((r << 16) | (g << 8) | b).toString(16)
     
-new Demo
+new Simulation
 

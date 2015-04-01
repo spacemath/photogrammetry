@@ -174,7 +174,7 @@ figcaption {
 .modelline {
     fill: none;
     stroke: green;
-    stroke-width: 2;
+    stroke-width: 3;
 }
 
 .modelcircle {
@@ -190,7 +190,6 @@ path.line {
     opacity: 0.5;
 }
 
-
 .axis path, .axis line {
   fill: none;
   stroke: steelblue;
@@ -200,9 +199,6 @@ path.line {
 .control-circle {
     cursor: ew-resize;
 }
-
-.foot .puzlet-link { float:left }
-.foot .org-link { float:right }
 
 svg {
     overflow: visible;
@@ -215,3 +211,6 @@ line.verticalGrid, line.horizontalGrid{
   stroke-width: 1px;
   opacity: 0.4;
 }
+
+.foot .puzlet-link { float:left }
+.foot .org-link { float:right }
