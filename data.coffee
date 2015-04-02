@@ -2,9 +2,6 @@
 
 # Edit code; press shift-enter or swipe right.
 
-# retrieve image pixels
-pix = $blab.image.getPixels() #;
-
 # brightness change
 del = 0 
 
@@ -16,8 +13,13 @@ brighten = (n) ->
 filter = (f) ->
     f(k) for k in [0...pix.length] by 4
 
-# apply filter
-filter brighten #;
+unless del is 0
 
-# insert pixels
-$blab.image.putPixels(pix) #;
+    # retrieve image pixels
+    pix = $blab.image.getPixels() #;
+    
+    # apply filter
+    filter brighten #;
+
+    # insert pixels
+    $blab.image.putPixels(pix)
