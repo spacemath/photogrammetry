@@ -125,7 +125,7 @@ class $blab.Plot extends d3Object
         if @grayScale
             intensity = @intensity(data)
             unless @lines
-                @lines = @plotLine(intensity, "blue")  # scalar
+                @lines = @plotLine(intensity, "green")  # scalar
             else
                 @lines.attr("d", @line(intensity))
         else
