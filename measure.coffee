@@ -43,13 +43,15 @@ class $blab.Plot extends d3Object
         
         # x <-> pixels
         @x2X = d3.scale.linear()
-            .domain([0, 1])
+            .domain([0, @w])
+#            .domain([0, 1])
             .range([0, @w])
         @X2x = @x2X.invert
         
         # y <-> pixels
         @y2Y = d3.scale.linear()
-            .domain([0, 1])
+            .domain([0, 255])
+#            .domain([0, 1])
             .range([@h, 0])
         @Y2y = @y2Y.invert
         
@@ -105,7 +107,8 @@ class $blab.Plot extends d3Object
             .attr("x", @w/2)
             .attr("y", @h)
             .attr("dy", 50)
-            .text("Normalized distance along line")
+            .text("Horizontal pixel")
+#            .text("Normalized distance along line")
             
         @plot.append("text")
             .attr("class", "y label")
@@ -154,7 +157,9 @@ class $blab.Guide extends d3Object
         {x: 0.95, y: 0.95}
     ]
     
-    constructor: (@id, @w, @h)->
+    constructor: (@spec) ->
+        
+        {@id, @w, @h, @grayScale} = @spec
         
         super @id
         
@@ -183,7 +188,8 @@ class $blab.Guide extends d3Object
         
         @compFromMarkers()
         
-        @steps = (x/100 for x in [0..100])
+        s = 100
+        @steps = (x/s for x in [0..s])
         
     initAxes: ->
         
@@ -308,8 +314,42 @@ class $blab.Guide extends d3Object
             
         unless @computing
             @tId = setTimeout (=> @computeColor(X1, Y1, X2, Y2)), 40
-            
+    
     computeColor: (X1, Y1, X2, Y2) =>
+        
+        @computing = true
+        
+        dX = X2 - X1
+        dY = Y2 - Y1
+        
+        Xq = [X1..X2]
+        Yq = (Math.round(Y1 + dY/dX*(x-Xq[0])) for x in Xq)  # TODO: efficiency
+        
+        #console.log "Xq/Yq", Xq, Yq
+        
+        #Xq = (Math.round(X1 + dX*ri) for ri in @steps)
+        #Yq = (Math.round(Y1 + dY*ri) for ri in @steps)
+        
+        imageData = ($blab.image.mouseData(x: x, y: Yq[idx]) for x, idx in Xq)
+#        imageData = ($blab.image.mouseData(x: Xq[idx], y: Yq[idx]) for s, idx in @steps)
+        
+        intensity = (clr, idx) -> imageData[idx].color[clr] #/255
+        
+        color = (clr) => ({interval: x, intensity: intensity(clr, idx)} for x, idx in Xq)
+#        color = (clr) => ({interval: s, intensity: intensity(clr, idx)} for s, idx in @steps)
+        
+        data =
+            red: color("r")
+            blue: color("b")
+            green: color("g")
+        
+        #console.log "data", data
+        
+        $blab.plot.update(data)
+        
+        @computing = false
+    
+    OLD_computeColor: (X1, Y1, X2, Y2) =>
         
         @computing = true
         

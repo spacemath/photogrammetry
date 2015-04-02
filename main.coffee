@@ -188,7 +188,11 @@ class Simulation
         
     draw: ->
         
-        guide = new $blab.Guide "guide", @w, @h
+        guide = new $blab.Guide
+            id: "guide"
+            w: @w
+            h: @h
+            grayScale: @grayScale
         
         $blab.plot = new $blab.Plot
             id: "plot"
