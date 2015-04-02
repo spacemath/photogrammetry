@@ -7,7 +7,7 @@ class Image
     
     constructor: (@spec) ->
         
-        {@container, @dropTarget, @loaded, @mousemove, @click, @mouseenter, @mouseleave} = @spec
+        {@container, @dropTarget, @grayScale, @loaded, @mousemove, @click, @mouseenter, @mouseleave} = @spec
         
         @imageContainer = $ "<div>",
             class: @imageContainerClass
@@ -48,7 +48,9 @@ class Image
         
     set: (src) ->
         @imageContainer.empty()
-        @image = $ "<img>", load: => @draw()
+        @image = $ "<img>",
+            class: "desaturate"
+            load: => @draw()
         @imageContainer.append @image
         @image.attr src: src
         
@@ -69,6 +71,7 @@ class Image
         @context.canvas.height = @h
         
         @context.drawImage(@image[0], 0, 0, @w, @h)
+        @grayScaleFilter() if @grayScale
         
         @dropTarget.on "mousemove", (e) => @mousemove?(@mouseData(@mouseCoords(e)))
         @dropTarget.on "click", (e) => @click?(@mouseData(@mouseCoords(e)))
@@ -78,6 +81,25 @@ class Image
         @mousemove?(@mouseData(@containerPos)) if @containerPos?
         
         @loaded?(this)
+        
+    grayScaleFilter: ->
+        
+        # Color contributions (alt: 0.3, 0.59, 0.11)
+        t = [0.34, 0.5, 0.16]
+        
+        imageData = @context.getImageData(0, 0, @w, @h)
+        d = imageData.data
+                
+        gray = (n) ->
+            b = 0
+            b += t[i]*d[n+i] for i in [0..2]
+            d[i] = b for i in [n..n+2]
+            
+        filter = (f) -> f(k) for dk, k in d by 4
+        
+        filter gray
+        
+        @context.putImageData(imageData, 0, 0)
         
     mouseData: (pos) ->
         return null unless pos?.x? and pos?.y?
@@ -122,6 +144,8 @@ class Simulation
     
     plotHeight: 200
     
+    grayScale: true
+    
     constructor: ->
         @container = $("#image")
         @dropTarget = $("#guide")
@@ -132,7 +156,7 @@ class Simulation
         click = (@data) => # no method
         mouseenter = => # no method
         mouseleave = => @showData @current
-        @image = new Image {@container, @dropTarget, loaded, mousemove, click, mouseenter, mouseleave}
+        @image = new Image {@container, @dropTarget, @grayScale, loaded, mousemove, click, mouseenter, mouseleave}
         @image.set(@images.craters.img)
         @showData @current
         @current.show()
@@ -163,8 +187,14 @@ class Simulation
         @draw()
         
     draw: ->
+        
         guide = new $blab.Guide "guide", @w, @h
-        $blab.plot = new $blab.Plot "plot", @w, @plotHeight
+        
+        $blab.plot = new $blab.Plot
+            id: "plot"
+            w: @w
+            h: @plotHeight
+            grayScale: @grayScale
         
     setDims: (outerSel, containerSel, w, h) ->
         $(outerSel).height(h)
@@ -184,11 +214,16 @@ class Simulation
         c = data.color
         s = c.r + c.g + c.b
         textCol = if s<500 then "white" else "black"
-        n = (Math.round(x/255*100)/100 for x in [c.r, c.g, c.b])
-        rgb = "(#{n[0]}, #{n[1]}, #{n[2]})"
         hex = "#" + ("000000" + @rgbToHex(c.r, c.g, c.b)).slice(-6)
-        "<span class='image-color' style='color: #{textCol}; background: #{hex}'>RGB = #{rgb}</span>"
-        #"<span class='image-color' style='color: #{textCol}; background: #{hex}'>#{hex}</span>"
+        if @grayScale
+            intensity = Math.round(s/3)
+            txt = "Intensity = #{intensity}"
+        else 
+            rgb = "(#{c.r}, #{c.g}, #{c.b})"
+    #        n = (Math.round(x/255*100)/100 for x in [c.r, c.g, c.b])
+            #rgb = "(#{n[0]}, #{n[1]}, #{n[2]})"
+            txt = "RGB = #{rgb}"
+        "<span class='image-color' style='color: #{textCol}; background: #{hex}'>#{txt}</span>"
         
     rgbToHex: (r, g, b) -> ((r << 16) | (g << 8) | b).toString(16)
     

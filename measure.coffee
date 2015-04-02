@@ -19,7 +19,9 @@ class $blab.Plot extends d3Object
     xTicks: 11
     yTicks: 6
     
-    constructor: (@id, @w, @h) ->
+    constructor: (@spec) ->
+        
+        {@id, @w, @h, @grayScale} = @spec
         
         super @id
         
@@ -112,23 +114,33 @@ class $blab.Plot extends d3Object
             .attr("y", 0)
             .attr("dy", -60)
             .attr("transform", "rotate(-90)")
-            .text("Intensity (RGB)")
+            .text("Intensity"+(if @grayScale then "" else " (RGB)"))
         
     update: (data) ->
         # TODO: handle using d3 enter/exit approach.
         console.log "Update plot"
-        unless @lines
-            @lines = (@plotLine(color, data) for color in @colors)
+        if @grayScale
+            intensity = @intensity(data)
+            unless @lines
+                @lines = @plotLine(intensity, "blue")  # scalar
+            else
+                @lines.attr("d", @line(intensity))
         else
-            line.attr("d", @line(data[@colors[idx]])) for line, idx in @lines
+            unless @lines
+                @lines = (@plotLine(data[color], color) for color in @colors)
+            else
+                line.attr("d", @line(data[@colors[idx]])) for line, idx in @lines
         
-    plotLine: (color, data) ->
+    plotLine: (data, color) ->
         @plot.append("path")
             .attr("class", "line")
-            .attr("d", @line(data[color]))
+            .attr("d", @line(data))
             .attr("stroke-width", 2)
             .attr("stroke", color)
-        
+            
+    intensity: (data) ->
+        data[@colors[0]]  # For speed: use only red value, assuming RGB all equal.
+
 
 class $blab.Guide extends d3Object
 

@@ -113,6 +113,10 @@ a {
 
 /*-------------------------------------------------------------------*/
 
+img.desaturate {
+  filter: grayscale(100%);
+}
+
 .drop-image-container {
   width: 800px;
   /*height: 600px;
