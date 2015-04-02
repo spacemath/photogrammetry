@@ -149,21 +149,21 @@ class $blab.Plot extends d3Object
 
 class $blab.Guide extends d3Object
 
-    r: 10 # Marker radius
+    r: 15 # Marker radius
     tId: null
     computing: false
-    
-    # Initial marker positions.
-    markerPos: [
-        {x: 0.05, y: 0.05}
-        {x: 0.95, y: 0.95}
-    ]
-    
+        
     constructor: (@spec) ->
         
         {@id, @w, @h, @grayScale} = @spec
         
         super @id
+        
+        # Initial marker positions.
+        @markerPos = [
+            {x: 0.0, y: 0.5*@h}
+            {x: 0.95*@w, y: 0.5*@h}
+        ]
         
         # housekeeping
         @obj.on("click", null)  # Clear any previous event handlers.
@@ -197,13 +197,13 @@ class $blab.Guide extends d3Object
         
         # x <-> pixels
         @x2X = d3.scale.linear()
-            .domain([0, 1])
+            .domain([0, @w])
             .range([0, @w])
         @X2x = @x2X.invert
         
         # y <-> pixels
         @y2Y = d3.scale.linear()
-            .domain([0, 1])
+            .domain([0, @h])
             .range([@h, 0])
         @Y2y = @y2Y.invert
         
@@ -250,7 +250,7 @@ class $blab.Guide extends d3Object
     grid: ->
         
         hg = @region.selectAll("line.horizontalGrid")
-            .data(@y2Y.ticks(9))
+            .data(@y2Y.ticks(10))
             .enter()
             .append("line")
             .attr("class", "horizontalGrid")
@@ -258,9 +258,10 @@ class $blab.Guide extends d3Object
             .attr("x2", @w)
             .attr("y1", (d) => @y2Y d)
             .attr("y2", (d) => @y2Y d)
-            
+        
         vg = @region.selectAll("line.verticalGrid")
-            .data(@x2X.ticks(9))
+#            .data(@x2X.ticks(30))
+            .data(@x2X.ticks(@w/50))
             .enter()
             .append("line")
             .attr("class", "verticalGrid")

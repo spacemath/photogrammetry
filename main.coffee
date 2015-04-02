@@ -194,11 +194,12 @@ class Simulation
             h: @h
             grayScale: @grayScale
         
+        xMax = Math.round(Math.sqrt(@w*@w + @h*@h))
         $blab.plot = new $blab.Plot
             id: "plot"
-            w: @w
+            w: xMax #@w
             h: @plotHeight
-            xMax: Math.round(Math.sqrt(@w*@w + @h*@h))
+            xMax: xMax
             grayScale: @grayScale
             xLabel: "Distance along path (pixels)"
             

@@ -218,12 +218,16 @@ svg {
     overflow: visible;
 }
 
-line.verticalGrid, line.horizontalGrid{
+line.verticalGrid, line.horizontalGrid {
   fill: none;
   shape-rendering: auto;
-  stroke: grey;
+  stroke: yellow;
   stroke-width: 1px;
   opacity: 0.4;
+}
+
+#plot line.verticalGrid, #plot line.horizontalGrid {
+  stroke: gray;
 }
 
 .foot .puzlet-link { float:left }
