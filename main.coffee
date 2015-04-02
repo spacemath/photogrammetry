@@ -198,7 +198,19 @@ class Simulation
             id: "plot"
             w: @w
             h: @plotHeight
+            xMax: Math.round(Math.sqrt(@w*@w + @h*@h))
             grayScale: @grayScale
+            xLabel: "Distance along path (pixels)"
+            
+        ###
+        $blab.yplot = new $blab.Plot
+            id: "yplot"
+            w: @h  # ZZZ const
+            h: @plotHeight
+            grayScale: @grayScale
+            rotation: 90
+            xLabel: "Vertical pixel"
+        ###
         
     setDims: (outerSel, containerSel, w, h) ->
         $(outerSel).height(h)

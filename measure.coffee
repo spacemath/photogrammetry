@@ -21,17 +21,19 @@ class $blab.Plot extends d3Object
     
     constructor: (@spec) ->
         
-        {@id, @w, @h, @grayScale} = @spec
+        {@id, @w, @h, @xMax, @grayScale, @rotation, @xLabel, @yLabel} = @spec
         
         super @id
         
         @obj.attr('width', @w).attr('height', @h)
         
         @plot = @obj.append('g')
-            .attr("transform", "translate( #{0}, #{0})")
+            .attr("transform", "translate(0, 0)")
             .attr('width', @w)
             .attr('height', @h)
             
+        @plot.attr("transform", "translate(#{@h}, 0) rotate(#{@rotation})") if @rotation  # ZZZ bug here
+                
         @grid()
         @axesLabels()
             
@@ -43,7 +45,7 @@ class $blab.Plot extends d3Object
         
         # x <-> pixels
         @x2X = d3.scale.linear()
-            .domain([0, @w])
+            .domain([0, @xMax])
 #            .domain([0, 1])
             .range([0, @w])
         @X2x = @x2X.invert
@@ -107,7 +109,7 @@ class $blab.Plot extends d3Object
             .attr("x", @w/2)
             .attr("y", @h)
             .attr("dy", 50)
-            .text("Horizontal pixel")
+            .text(@xLabel)
 #            .text("Normalized distance along line")
             
         @plot.append("text")
@@ -298,9 +300,9 @@ class $blab.Guide extends d3Object
     compFromMarkers: ->
         
         X1 = +@m1.attr("cx")
-        Y1 = +@m1.attr("cy")
+        Y1 = Math.floor(+@m1.attr("cy"))
         X2 = +@m2.attr("cx")
-        Y2 = +@m2.attr("cy")
+        Y2 = Math.floor(+@m2.attr("cy"))
         
         @line
             .attr("x1", X1)
@@ -319,32 +321,44 @@ class $blab.Guide extends d3Object
         
         @computing = true
         
-        dX = X2 - X1
-        dY = Y2 - Y1
+        abs = Math.abs
+        floor = Math.floor
+        dist = (x, y) -> floor(Math.sqrt(x*x + y*y))
         
-        Xq = [X1..X2]
-        Yq = (Math.round(Y1 + dY/dX*(x-Xq[0])) for x in Xq)  # TODO: efficiency
+        intensity = (data, clr, idx) -> data[idx].color[clr]
         
-        #console.log "Xq/Yq", Xq, Yq
+        color = (data, q1, q2, clr) =>
+            q10 = q1[0]
+            q20 = q2[0]
+            ({interval: dist(q1i-q10, q2[idx]-q20), intensity: intensity(data, clr, idx)} for q1i, idx in q1)
         
-        #Xq = (Math.round(X1 + dX*ri) for ri in @steps)
-        #Yq = (Math.round(Y1 + dY*ri) for ri in @steps)
+        if abs(X2-X1) > abs(Y2-Y1)
+            p = ["x", "y"]
+            q1r = [X1, X2]
+            q2r = [Y1, Y2]
+        else
+            p = ["y", "x"]
+            q1r = [Y1, Y2]
+            q2r = [X1, X2]
+            
+        d1 = q1r[1] - q1r[0]
+        d2 = q2r[1] - q2r[0]
+        q1 = [q1r[0]..q1r[1]]
+        q2 = if abs(d1)>0 then (floor(q2r[0] + d2/d1*(q1i-q1r[0])) for q1i in q1) else [floor(q2r[1])]
         
-        imageData = ($blab.image.mouseData(x: x, y: Yq[idx]) for x, idx in Xq)
-#        imageData = ($blab.image.mouseData(x: Xq[idx], y: Yq[idx]) for s, idx in @steps)
-        
-        intensity = (clr, idx) -> imageData[idx].color[clr] #/255
-        
-        color = (clr) => ({interval: x, intensity: intensity(clr, idx)} for x, idx in Xq)
-#        color = (clr) => ({interval: s, intensity: intensity(clr, idx)} for s, idx in @steps)
+        z = (q1i, q2i) ->
+            s = {}
+            s[p[0]] = q1i
+            s[p[1]] = q2i
+            s
+                
+        imageData = ($blab.image.mouseData(z(q1i, q2[idx])) for q1i, idx in q1)
         
         data =
-            red: color("r")
-            blue: color("b")
-            green: color("g")
-        
-        #console.log "data", data
-        
+            red: color(imageData, q1, q2, "r")
+            blue: color(imageData, q1, q2, "b")
+            green: color(imageData, q1, q2, "g")
+                
         $blab.plot.update(data)
         
         @computing = false

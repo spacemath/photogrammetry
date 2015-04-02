@@ -16,7 +16,7 @@ filter = (f) ->
 unless del is 0
 
     # retrieve image pixels
-    pix = $blab.image.getPixels() #;
+    pix = $blab.image.getPixels()
     
     # apply filter
     filter brighten #;

@@ -84,6 +84,16 @@ a {
   /*background: gray;*/
 }
 
+.ygraphics-container {
+  position: absolute;
+  width: 200px;
+  height: 420px;
+  top: 10px;
+  left: 50%;
+  margin-left: 400px;  /* should  be half width of graphics-container */
+  /*background: green;*/
+}
+
 .overlay {
   position: absolute;
   left: 0;
